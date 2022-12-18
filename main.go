@@ -1,0 +1,29 @@
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"os"
+
+	"github.com/syamilAbdillah/ecommerce/controller"
+	"github.com/syamilAbdillah/ecommerce/db"
+)
+
+func main() {
+    if err := run(); err != nil {
+        fmt.Fprintf(os.Stderr, "%s \n", err)
+        os.Exit(1)
+    }
+}
+
+func run() error {
+    conn, err := db.Connect()
+    if err != nil {
+        return err
+    }
+
+    defer conn.Close()
+
+    fmt.Println("running on port :8080")
+    return http.ListenAndServe(":8080", controller.Init())
+}

@@ -1,0 +1,29 @@
+tmp/
+dev.db*
+rpc.ridl
+
+# Logs
+admin-ui/logs
+admin-ui/*.log
+admin-ui/npm-debug.log*
+admin-ui/yarn-debug.log*
+admin-ui/yarn-error.log*
+admin-ui/pnpm-debug.log*
+admin-ui/lerna-debug.log*
+
+admin-ui/node_modules/
+admin-ui/dist
+admin-ui/dist-ssr
+admin-ui/*.local
+
+# Editor directories and files
+admin-ui/.vscode/*
+!admin-ui/.vscode/extensions.json
+admin-ui/.idea
+admin-ui/.DS_Store
+admin-ui/*.suo
+admin-ui/*.ntvs*
+admin-ui/*.njsproj
+admin-ui/*.sln
+admin-ui/*.sw?
+admin-ui/.env

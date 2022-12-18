@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+/* button */
+  .btn {
+    @apply inline-flex items-center justify-center gap-3 rounded px-4 py-2 font-medium outline-2 transition active:scale-95;
+  }
+
+  .btn-neutral {
+    @apply bg-gray-600 text-white outline-gray-300 hover:bg-gray-400;
+  }
+
+  .sidebar-active {
+    @apply ring-1 ring-gray-600;
+  }
+
+
+/*  table  */
+  table.table thead tr th {
+    @apply text-left py-2 px-4 bg-gray-100;
+  }
+
+  table.table tbody tr {
+    @apply cursor-pointer;
+  }
+
+  table.table tbody tr:hover td {
+    @apply bg-gray-100;
+  }
+
+  table.table tbody tr td {
+    @apply p-4 border-y whitespace-nowrap;
+  }
+
+  table.table tr:active {
+    @apply text-gray-500;
+  }
+
+  table.table tr th:first-child {
+    @apply sticky left-0 z-10;
+  }
+
+  table.table tr td:first-child {
+    @apply sticky left-0 z-10 bg-gray-50;
+  }
+
+  table.table tr th:last-child {
+    @apply sticky right-0 z-10;
+  }
+
+  table.table tr td:last-child {
+    @apply sticky right-0 z-10 bg-gray-50;
+  }
+
+
+}
