@@ -9,6 +9,7 @@ import (
 )
 
 func Init() http.Handler {
+	validateInit()
 	r := chi.NewRouter()
 
 	// middleware setup

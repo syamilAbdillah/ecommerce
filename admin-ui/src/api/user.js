@@ -11,14 +11,14 @@ export default {
     async create(userData = {}) {
         return await this.req('/', {
             method: 'POST',
-            body: JSON.parse(userData)
+            body: JSON.stringify(userData)
         })
     },
 
     async update(id, userData = {}) {
         return await this.req(`/${id}`, {
             method: 'PUT',
-            body: JSON.parse(userData)
+            body: JSON.stringify(userData)
         })
     },
 

@@ -2,6 +2,7 @@ import { createSignal,  Show } from 'solid-js'
 import { A, useBeforeLeave } from '@solidjs/router'
 import { FiUser, FiHome, FiPackage, FiMenu } from 'solid-icons/fi'
 import { clickOutside } from './directives'
+import Avatar from './Avatar'
 
 const [active, setActive] = createSignal(false)
 const open = () => setActive(true)
@@ -105,10 +106,9 @@ function SidebarFooter(props){
 	return(
 		<div className="flex flex-col border w-full">
 			<div className="flex-0 flex items-center gap-2 p-4 cursor-pointer" onClick={open} use:clickOutside={close}>
-				<img 
-					className="h-12 w-12 rounded-full border"
-					src="https://avatars.dicebear.com/api/adventurer/default-facehook-profile.svg" 
+				<Avatar 
 					alt="profile"
+					src="https://avatars.dicebear.com/api/adventurer/default-facehook-profile.svg" 
 				/>
 				<div>
 					<h2 className="text-md font-medium">{props.name}</h2>

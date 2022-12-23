@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -101,6 +102,8 @@ func UserFind(
 		offset := uint64(0)
 		take := uint64(20)
 		role := model.RoleFromString(r.URL.Query().Get("role"))
+
+		fmt.Printf("role: %v\n", role)
 
 		if t, err := strconv.Atoi(r.URL.Query().Get("take")); err == nil {
 			take = uint64(t)

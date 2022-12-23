@@ -12,7 +12,7 @@ func UserCount(ctx context.Context, role model.Role) (int64, error) {
 	var total int64
 	sqlBuilder := sq.Select("COUNT(id)").From("users")
 
-	if role != "" {
+	if role == model.RoleSuperuser || role == model.RoleUser {
 		sqlBuilder = sqlBuilder.Where(sq.Eq{"role": role})
 	}
 
@@ -58,10 +58,13 @@ func UserFind(ctx context.Context, role model.Role, limit uint64, offset uint64)
 
 	sqlBuilder := sq.
 		Select("id", "name", "email", "profile_picture", "created_at", "role").
-		Where(sq.Eq{"role": role}).
 		From("users").
 		Limit(limit).
 		Offset(offset)
+
+	if role == model.RoleSuperuser || role == model.RoleUser {
+		sqlBuilder = sqlBuilder.Where(sq.Eq{"role": role})
+	}
 
 	query, args, err := sqlBuilder.ToSql()
 

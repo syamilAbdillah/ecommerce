@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/go-chi/render"
 	"github.com/syamilAbdillah/ecommerce/model"
 )
 
@@ -16,7 +17,32 @@ import (
 *
 ======================================================================================
 
-	USER Req & Res Body
+	ERROR
+
+======================================================================================
+*/
+type ErrorResponse struct {
+	HTTPStatusCode int              `json:"-"`
+	ErrText        string           `json:"error,omitempty"`
+	ValidationErr  ValidationErrors `json:"invalid_errors,omitempty"`
+}
+
+func (er *ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	render.Status(r, er.HTTPStatusCode)
+	return nil
+}
+
+/*
+*
+*
+*
+*
+*
+*
+*
+======================================================================================
+
+	USER
 
 ======================================================================================
 */

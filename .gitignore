@@ -1,6 +1,7 @@
 tmp/
 dev.db*
 rpc.ridl
+.env
 
 # Logs
 admin-ui/logs

@@ -1,20 +1,28 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
-
-	"github.com/go-chi/render"
 )
 
-type ErrorResponse struct {
-	HTTPStatusCode int              `json:"-"`
-	ErrText        string           `json:"error,omitempty"`
-	ValidationErr  ValidationErrors `json:"invalid_errors,omitempty"`
+type ValidationErrors map[string]string
+
+func (ie ValidationErrors) Error() string {
+	var k string
+	var v string
+
+	for k, v = range ie {
+		break
+	}
+
+	return fmt.Sprintf("[%s] %s \n", k, v)
 }
 
-func (er *ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	render.Status(r, er.HTTPStatusCode)
-	return nil
+var errorTable = map[string]string{
+	"required": "shouldn't be empty %v",
+	"email":    "invalid email format %v",
+	"max":      "at most %v char(s)",
+	"min":      "at least %v char(s)",
 }
 
 // error helper
