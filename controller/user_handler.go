@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/go-chi/render"
 	"github.com/syamilAbdillah/ecommerce/db"
 	"github.com/syamilAbdillah/ecommerce/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -96,23 +96,19 @@ func UserCreate(
 */
 func UserFind(
 	userCount func(context.Context, model.Role) (int64, error),
-	userFind func(context.Context, model.Role, uint64, uint64) ([]*model.User, error),
+	userFind func(context.Context, model.Role, int64, primitive.ObjectID) ([]*model.User, error),
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		offset := uint64(0)
-		take := uint64(20)
+		take := int64(20)
 		role := model.RoleFromString(r.URL.Query().Get("role"))
-
-		fmt.Printf("role: %v\n", role)
+		lastID := primitive.ObjectID{}
 
 		if t, err := strconv.Atoi(r.URL.Query().Get("take")); err == nil {
-			take = uint64(t)
+			take = int64(t)
 		}
 
-		if p, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil {
-			if p > 0 {
-				offset = (uint64(p) * take) - take
-			}
+		if id, err := primitive.ObjectIDFromHex(r.URL.Query().Get("last_id")); err == nil {
+			lastID = id
 		}
 
 		errChan := make(chan error)
@@ -124,7 +120,7 @@ func UserFind(
 			total <- t
 		}()
 
-		uu, err := userFind(r.Context(), role, take, offset)
+		uu, err := userFind(r.Context(), role, take, lastID)
 		if err != nil {
 			render.Render(w, r, InternalErr(err))
 			return
@@ -157,18 +153,18 @@ func UserFind(
 ======================================================================================
 */
 func UserGet(
-	userGetById func(context.Context, int64) (*model.User, error),
+	userGetById func(context.Context, primitive.ObjectID) (*model.User, error),
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		u := new(model.User)
-		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		id, err := primitive.ObjectIDFromHex(chi.URLParam(r, "id"))
 
 		if err != nil {
 			render.Render(w, r, WrapErr(errors.New("user not found"), http.StatusNotFound))
 			return
 		}
 
-		u.Id = int64(id)
+		u.Id = id
 
 		render.Render(w, r, &userResponse{
 			User: u,

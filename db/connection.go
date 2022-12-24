@@ -1,20 +1,41 @@
 package db
 
 import (
+	"context"
+	"os"
 	"sync"
 
-	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var conn *sqlx.DB
+var db *mongo.Database
+var conn *mongo.Client
 var once sync.Once
 
-func Connect() (*sqlx.DB, error) {
+type Disconnect func() error
+
+// initialize connection once (singleton pattern), returning disconnect function and error
+func Connect() (Disconnect, error) {
 	var err error
+	ctx := context.Background()
+
 	once.Do(func() {
-		conn, err = sqlx.Open("sqlite3", "file:dev.db?cache=shared&_journal=WAL")
+		conn, err = mongo.Connect(
+			ctx,
+			options.Client().ApplyURI(os.Getenv("DATABASE_URI")),
+		)
+
+		db = conn.Database(os.Getenv("DATABASE_NAME"))
 	})
 
-	return conn, err
+	return func() error {
+		return conn.Disconnect(ctx)
+	}, err
+}
+
+func Ping() error {
+	return conn.Ping(context.Background(), readpref.Primary())
 }

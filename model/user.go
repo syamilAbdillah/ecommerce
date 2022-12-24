@@ -1,5 +1,7 @@
 package model
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Role string
 
 const (
@@ -21,11 +23,11 @@ func RoleFromString(r string) Role {
 }
 
 type User struct {
-	Id             int64  `json:"id" db:"id"`
-	Name           string `json:"name" db:"name" validate:"min=3,max=64"`
-	Email          string `json:"email" db:"email" validate:"required,email"`
-	Password       string `json:"password,omitempty" db:"password" validate:"min=8,max=16"`
-	ProfilePicture string `json:"profile_picture" db:"profile_picture"`
-	CreatedAt      int64  `json:"created_at" db:"created_at"`
-	Role           Role   `json:"role" db:"role"`
+	Id             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name           string             `json:"name" bson:"name" validate:"min=3,max=64"`
+	Email          string             `json:"email" bson:"email" validate:"required,email"`
+	Password       string             `json:"password,omitempty" bson:"password" validate:"min=8,max=16"`
+	ProfilePicture string             `json:"profile_picture" bson:"profile_picture"`
+	CreatedAt      int64              `json:"created_at" bson:"created_at"`
+	Role           Role               `json:"role" bson:"role"`
 }
