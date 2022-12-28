@@ -40,10 +40,10 @@ var (
 
 // wrap internal server error
 func InternalErr(err error) *ErrorResponse {
-	er := new(ErrorResponse)
-	er.HTTPStatusCode = http.StatusInternalServerError
-	er.ErrText = err.Error()
-	return er
+	return &ErrorResponse{
+		HTTPStatusCode: http.StatusInternalServerError,
+		ErrText:        err.Error(),
+	}
 }
 
 // validation error
@@ -63,5 +63,13 @@ func WrapErr(err error, status int) *ErrorResponse {
 	return &ErrorResponse{
 		HTTPStatusCode: status,
 		ErrText:        err.Error(),
+	}
+}
+
+// 404 helper, {"error": "<prefix> not found"}
+func NotFoundErr(prefix string) *ErrorResponse {
+	return &ErrorResponse{
+		HTTPStatusCode: http.StatusNotFound,
+		ErrText:        fmt.Sprintf("%s not found", prefix),
 	}
 }

@@ -1,10 +1,12 @@
 import { lazy } from 'solid-js'
 import { Routes, Route } from '@solidjs/router'
-import { findUsers } from './datastore/user.js'
 
 const DashboardLayout = lazy(() => import('./pages/DashboardLayout.jsx'))
 
 const SuperuserPage = lazy(() => import('./pages/Superuser.jsx'))
+import SuperuserData from './pages/SuperuserData'
+const SuperuserDetailPage = lazy(() => import('./pages/SuperuserDetail.jsx'))
+import SuperuserDetailData from './pages/SuperuserDetailData'
 const SuperuserCreatePage = lazy(() => import('./pages/SuperuserCreate.jsx'))
 
 const ProductPage = lazy(() => import('./pages/Product.jsx'))
@@ -18,13 +20,18 @@ function App() {
 				path="/superuser"
 			>
 				<Route 
-					path="/" 
-					component={SuperuserPage} 
-					data={findUsers}
-				></Route>
-				<Route 
 					path="/tambah" 
 					component={SuperuserCreatePage}
+				></Route>
+				<Route
+					path="/:id"
+					component={SuperuserDetailPage}
+					data={SuperuserDetailData}
+				></Route>
+				<Route 
+					path="/" 
+					component={SuperuserPage} 
+					data={SuperuserData}
 				></Route>
 			</Route> 
 			<Route path="/produk" component={ProductPage}></Route>

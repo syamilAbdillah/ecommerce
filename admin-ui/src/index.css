@@ -9,6 +9,10 @@
     @apply inline-flex items-center justify-center gap-3 rounded px-4 py-2 font-medium outline-2 transition active:scale-95;
   }
 
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
   .btn-neutral {
     @apply bg-gray-600 text-white outline-gray-300;
   }

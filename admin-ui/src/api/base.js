@@ -1,4 +1,4 @@
-export default {
+const baseApi =  {
     baseURL: import.meta.env.VITE_API,
     path: '',
 
@@ -33,3 +33,5 @@ export default {
         }
     }
 }
+
+export default baseApi

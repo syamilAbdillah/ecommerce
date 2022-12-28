@@ -47,11 +47,15 @@ func UserFind(
 	ctx context.Context,
 	role model.Role,
 	limit int64,
-	lastId primitive.ObjectID,
+	skip int64,
 ) ([]*model.User, error) {
 	var uu []*model.User
-	filter := bson.M{"_id": bson.M{"$gt": lastId}}
-	opt := options.Find().SetLimit(limit).SetProjection(bson.D{{"password", 0}})
+	filter := bson.M{}
+	opt := options.Find().
+		SetLimit(limit).
+		SetProjection(bson.D{{Key: "password", Value: 0}}).
+		SetSort(bson.D{{Key: "_id", Value: -1}}).
+		SetSkip(skip)
 
 	if role == model.RoleSuperuser || role == model.RoleUser {
 		filter["role"] = role
@@ -77,14 +81,14 @@ func UserFind(
 }
 
 func userGetBy(ctx context.Context, field string, value interface{}) (*model.User, error) {
-	var u *model.User
-	err := db.Collection("users").FindOne(ctx, bson.M{field: value}).Decode(u)
+	var u model.User
+	err := db.Collection("users").FindOne(ctx, bson.M{field: value}).Decode(&u)
 
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
 	}
 
-	return u, err
+	return &u, err
 }
 
 func UserGetByEmail(ctx context.Context, email string) (*model.User, error) {
@@ -92,7 +96,7 @@ func UserGetByEmail(ctx context.Context, email string) (*model.User, error) {
 }
 
 func UserGetById(ctx context.Context, id primitive.ObjectID) (*model.User, error) {
-	return userGetBy(ctx, "id", id)
+	return userGetBy(ctx, "_id", id)
 }
 
 func UserUpdate(ctx context.Context, u *model.User) error {

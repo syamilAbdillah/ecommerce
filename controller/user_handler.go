@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -96,20 +96,24 @@ func UserCreate(
 */
 func UserFind(
 	userCount func(context.Context, model.Role) (int64, error),
-	userFind func(context.Context, model.Role, int64, primitive.ObjectID) ([]*model.User, error),
+	userFind func(context.Context, model.Role, int64, int64) ([]*model.User, error),
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		take := int64(20)
 		role := model.RoleFromString(r.URL.Query().Get("role"))
-		lastID := primitive.ObjectID{}
+		skip := int64(0)
 
 		if t, err := strconv.Atoi(r.URL.Query().Get("take")); err == nil {
 			take = int64(t)
 		}
 
-		if id, err := primitive.ObjectIDFromHex(r.URL.Query().Get("last_id")); err == nil {
-			lastID = id
+		if p, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil && p > 0 {
+			page := int64(p)
+			fmt.Printf("skip = (%d * %d) - %d \n", page, take, take)
+			skip = (page * take) - take
 		}
+
+		fmt.Printf("skip: %d\n", skip)
 
 		errChan := make(chan error)
 		total := make(chan int64)
@@ -120,7 +124,7 @@ func UserFind(
 			total <- t
 		}()
 
-		uu, err := userFind(r.Context(), role, take, lastID)
+		uu, err := userFind(r.Context(), role, take, skip)
 		if err != nil {
 			render.Render(w, r, InternalErr(err))
 			return
@@ -156,15 +160,26 @@ func UserGet(
 	userGetById func(context.Context, primitive.ObjectID) (*model.User, error),
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		u := new(model.User)
+		var u *model.User
+
 		id, err := primitive.ObjectIDFromHex(chi.URLParam(r, "id"))
 
 		if err != nil {
-			render.Render(w, r, WrapErr(errors.New("user not found"), http.StatusNotFound))
+			render.Render(w, r, NotFoundErr("user"))
 			return
 		}
 
-		u.Id = id
+		u, err = userGetById(r.Context(), id)
+
+		if err != nil {
+			render.Render(w, r, InternalErr(err))
+			return
+		}
+
+		if u == nil {
+			render.Render(w, r, NotFoundErr("user"))
+			return
+		}
 
 		render.Render(w, r, &userResponse{
 			User: u,
