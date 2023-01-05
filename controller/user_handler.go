@@ -197,6 +197,109 @@ func UserGet(
 *
 ======================================================================================
 
+	PUT /users/:id
+
+======================================================================================
+*/
+func UserUpdate(
+	userUpdate func(context.Context, *model.User) error,
+	userGetById func(context.Context, primitive.ObjectID) (*model.User, error),
+) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := primitive.ObjectIDFromHex(chi.URLParam(r, "id"))
+		if err != nil {
+			render.Render(w, r, NotFoundErr("user"))
+			return
+		}
+
+		u, err := userGetById(r.Context(), id)
+		if err != nil {
+			render.Render(w, r, InternalErr(err))
+			return
+		}
+
+		if u == nil {
+			render.Render(w, r, NotFoundErr("user"))
+			return
+		}
+
+		userData := userPayload{User: *u}
+		err = render.Bind(r, &userData)
+		if err != nil {
+			render.Render(w, r, ValidationErr(err))
+			return
+		}
+
+		err = userUpdate(r.Context(), &userData.User)
+		if err != nil {
+			render.Render(w, r, InternalErr(err))
+			return
+		}
+
+		render.Render(w, r, &userResponse{
+			User: &userData.User,
+		})
+	}
+}
+
+/*
+*
+*
+*
+*
+*
+*
+*
+======================================================================================
+
+	DELETE /users/:id
+
+======================================================================================
+*/
+func UserDelete(
+	userDeleteById func(context.Context, primitive.ObjectID) error,
+	userGetById func(context.Context, primitive.ObjectID) (*model.User, error),
+) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := primitive.ObjectIDFromHex(chi.URLParam(r, "id"))
+		if err != nil {
+			render.Render(w, r, NotFoundErr("user"))
+			return
+		}
+
+		u, err := userGetById(r.Context(), id)
+		if err != nil {
+			render.Render(w, r, NotFoundErr("user"))
+			return
+		}
+
+		if u == nil {
+			render.Render(w, r, NotFoundErr("user"))
+			return
+		}
+
+		err = userDeleteById(r.Context(), id)
+		if err != nil {
+			render.Render(w, r, InternalErr(err))
+			return
+		}
+
+		render.Render(w, r, &userResponse{
+			User: u,
+		})
+	}
+}
+
+/*
+*
+*
+*
+*
+*
+*
+*
+======================================================================================
+
 	User sub route
 
 ======================================================================================
@@ -204,5 +307,9 @@ func UserGet(
 func UserRoute(r chi.Router) {
 	r.Post("/", UserCreate(db.UserGetByEmail, db.UserCreate))
 	r.Get("/", UserFind(db.UserCount, db.UserFind))
-	r.Get("/{id}", UserGet(db.UserGetById))
+	r.Route("/{id}", func(r chi.Router) {
+		r.Get("/", UserGet(db.UserGetById))
+		r.Put("/", UserUpdate(db.UserUpdate, db.UserGetById))
+		r.Delete("/", UserDelete(db.UserDelete, db.UserGetById))
+	})
 }

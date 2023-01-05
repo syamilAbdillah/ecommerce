@@ -100,10 +100,11 @@ func UserGetById(ctx context.Context, id primitive.ObjectID) (*model.User, error
 }
 
 func UserUpdate(ctx context.Context, u *model.User) error {
-	_, err := db.Collection("users").UpdateByID(ctx, u.Id, bson.M{
+	update := bson.M{
 		"name":            u.Name,
 		"password":        u.Password,
 		"profile_picture": u.ProfilePicture,
-	})
+	}
+	_, err := db.Collection("users").UpdateByID(ctx, u.Id, bson.M{"$set": update})
 	return err
 }

@@ -18,7 +18,7 @@
   }
 
   .btn-neutral:hover {
-    @apply bg-gray-400;
+    @apply bg-gray-700;
   }
 
   .btn-danger-light {
@@ -34,7 +34,7 @@
   }
 
   .btn-primary:hover {
-    @apply bg-indigo-400;
+    @apply bg-indigo-600;
   }
 
   .sidebar-active {
