@@ -1,5 +1,3 @@
-import base from './base'
-
 /**
  * @typedef {Object} User user model
  * @property {string} id
@@ -12,61 +10,85 @@ import base from './base'
  */
 
 
-const userApi =  {
-    __proto__: base,
-    path: '/users',
+import { createRequesAPI } from './base'
 
-    async find({take, page} = {take: 10, page: 1}) {
-        const params = new URLSearchParams()
-        params.append('take', take)
-        params.append('page', page)
-        
-        return await this.req('?' + params.toString())
-    },
+const api = createRequesAPI(`${import.meta.env.VITE_API}/users`)
 
-    /**
-     * 
-     * @param {string} id 
-     * @returns {Promise<{user?: User, error?: string}>}
-     */
-    async get(id) {
-        return await this.req('/' + id)
-    },
-
-    /**
-     * 
-     * @param {{name: string, email: string, password: string}} userData 
-     * 
-     * @returns {Promise<{user?: User, invalid_errors?: Object<string,string>, error?: string}>}
-     */
-    async create(userData = {}) {
-        return await this.req('/', {
-            method: 'POST',
-            body: JSON.stringify(userData)
-        })
-    },
-
-    /**
-     * 
-     * @param {string} id 
-     * @param {{name: string, email: string, password: string}} userData 
-     * @returns {Promise<{
-     *  user?: User,
-     * invalid_errors?: Object<string,string>,
-     * error?: string
-     * }>}
-     */
-    async update(id, userData = {}) {
-        return await this.req(`/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(userData)
-        })
-    },
-
-    async remove(id) {
-        return await this.req(`/${id}`, {method: 'DELETE'})
-    },
+/**
+ * 
+ * @param {{take: number, page: number}} param0 
+ * @returns {Promise<{
+ *  httpStatusCode: number,
+ *  users?: User[],
+ *  total?: number,
+ *  error?: string,
+ * }>}
+ */
+export async function userFind({take, page} = {take: 10, page: 1}) {
+    const params = new URLSearchParams()
+    params.append('take', take)
+    params.append('page', page)
+    
+    return await api('?' + params.toString())
 }
 
+/**
+ * 
+ * @param {string} id user's unique id 
+ * @returns {Promise<{
+ *  httpStatusCode: number,
+ *  user?: User,
+ *  error?: string,
+ * }>}
+ */
+export async function userGetById(id) {
+    return await api('/' + id)
+}
 
-export default userApi
+/**
+ * 
+ * @param {{name: string, email: string, password: string}} userData 
+ * @returns {Promise<{
+ *  httpStatusCode: number,
+ *  user?: User, 
+ *  invalid_errors?: Object<string,string>, 
+ *  error?: string
+ * }>}
+ */
+export async function userCreate(userData = {}) {
+    return await api('/', {
+        method: 'POST',
+        body: JSON.stringify(userData),
+    })
+}
+
+/**
+ * 
+ * @param {string} id 
+ * @param {{name: string, password: string, email: string}} userData 
+ * @returns {Promise<{
+ *  httpStatusCode: number,
+ *  user?: User,
+ *  invalid_errors?: Object<string,string>,
+ *  error?: string
+ * }>}
+ */
+export async function userUpdate(id = '', userData = {}) {
+    return await api('/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(userData)
+    })
+}
+
+/**
+ * 
+ * @param {string} id 
+ * @returns {Promise<{
+ *  httpStatusCode: number,
+ *  user?: User,
+ *  error?: string,
+ * }>}
+ */
+export async function userDelete(id = '') {
+    return await api('/' + id, { method: 'DELETE' })
+}

@@ -1,8 +1,9 @@
 import { createResource } from "solid-js"
-import userApi from "../api/user"
+import {userGetById} from "../api/user"
 
+/** @type import('@solidjs/router/dist').RouteDataFunc */
 function routeData({params}) {
-    const [data] = createResource(() => params, p => userApi.get(p.id))
+    const [data] = createResource(() => params, p => userGetById(p.id))
     return data
 }
 

@@ -1,7 +1,7 @@
 import { A, useNavigate } from "@solidjs/router"
 import { FiChevronLeft } from "solid-icons/fi"
 import { Show, createSignal } from "solid-js"
-import userApi from "../api/user"
+import { userCreate } from "../api/user"
 import TextInput from "../components/TextInput"
 
 function SuperuserCreate() {
@@ -18,7 +18,7 @@ function SuperuserCreate() {
         }
         setLoading(true)
 
-        const result = await userApi.create(userData)
+        const result = await userCreate(userData)
 
         if(result.user) {
             e.target.reset()

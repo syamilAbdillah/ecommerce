@@ -1,6 +1,5 @@
 import { Show } from "solid-js"
 import { FiChevronRight, FiPlusSquare } from 'solid-icons/fi'
-import userStore, {findUsers} from "../datastore/user"
 import Table from "../components/Table"
 import Avatar from "../components/Avatar"
 import { A, useNavigate, useRouteData, useSearchParams } from "@solidjs/router"
@@ -29,7 +28,7 @@ export default function() {
 	}
 
 	return (<>
-		<A href="/superuser/tambah" inactiveClass="btn btn-neutral mb-4" onClick={findUsers}>
+		<A href="/superuser/tambah" inactiveClass="btn btn-neutral mb-4">
 			<span>superuser baru</span>
 			<FiPlusSquare></FiPlusSquare>
 		</A>

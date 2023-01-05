@@ -3,7 +3,7 @@ import { FiChevronLeft, FiTrash2 } from 'solid-icons/fi'
 import { useRouteData, useParams, A } from "@solidjs/router"
 import TextInput from '@/components/TextInput'
 import DeleteButton from "../components/DeleteButton"
-import userApi from "../api/user"
+import { userDelete, userUpdate } from "../api/user"
 
 function SuperuserDetail() {
     const data = useRouteData()
@@ -16,13 +16,14 @@ function SuperuserDetail() {
     const handleSubmit = async e => {
         e.preventDefault()
         const userData = Object.fromEntries(new FormData(e.target))
-        if(userData.password != userData.confirm) return setErrors({confirm: 'tidak sama dengan password'})
+        if(userData.password != userData.confirm) 
+            return setErrors({confirm: 'tidak sama dengan password'})
 
         setLoading(true)
         setErrors({})     
         hasError() && setHasError(undefined)   
         
-        const result = await userApi.update(params.id, userData)
+        const result = await userUpdate(params.id, userData)
         result.invalid_errors && setErrors(result.invalid_errors)
         result.user && alert('success')
         result.error && setHasError(result.error)
@@ -35,7 +36,7 @@ function SuperuserDetail() {
         setLoading(true)
         hasError() && setHasError(undefined)
 
-        const result = await userApi.remove(params.id)
+        const result = await userDelete(params.id)
         result.error && setHasError(result.error)
         
         /** @todo implement if success */

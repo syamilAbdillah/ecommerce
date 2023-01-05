@@ -1,7 +1,8 @@
 import { createResource } from 'solid-js'
-import userApi from '@/api/user'
 import { useSearchParams } from '@solidjs/router'
+import { userFind } from '../api/user'
 
+/** @type import('@solidjs/router/dist').RouteDataFunc */
 function routeData() {
     const [searchParams] = useSearchParams()
     const [data] = createResource(
@@ -9,7 +10,7 @@ function routeData() {
             take: Number(searchParams.take),
             page: Number( searchParams.page),
         }), 
-        sp => userApi.find(sp)
+        sp => userFind(sp)
     )
 
     return data
