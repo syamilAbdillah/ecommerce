@@ -3,7 +3,6 @@ module github.com/syamilAbdillah/ecommerce
 go 1.19
 
 require (
-	github.com/Masterminds/squirrel v1.5.3
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/render v1.0.2
@@ -20,8 +19,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
-	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pkg/errors v0.9.1 // indirect

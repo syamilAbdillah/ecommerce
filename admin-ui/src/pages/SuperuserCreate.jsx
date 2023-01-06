@@ -3,6 +3,11 @@ import { FiChevronLeft } from "solid-icons/fi"
 import { Show, createSignal } from "solid-js"
 import { userCreate } from "../api/user"
 import TextInput from "../components/TextInput"
+import { failed, success } from "../components/Toaster"
+
+const USER_CREATED_MESSAGE   = 'berhasil menambahkan data user baru'
+const INVALID_ERRORS_MESSAGE = 'data yang anda masukan tidak valid'
+const INTERNAL_ERROR_MESSAGE = 'terjadi kesalahan pada server, saat manambahkan user'
 
 function SuperuserCreate() {
     const navigate = useNavigate()
@@ -22,12 +27,16 @@ function SuperuserCreate() {
 
         if(result.user) {
             e.target.reset()
+            success(USER_CREATED_MESSAGE)
             navigate('/superuser')
         }
 
         if(result.invalid_errors) {
             setErrors(result.invalid_errors)
+            failed(INVALID_ERRORS_MESSAGE)
         }
+
+        result.error && failed(INTERNAL_ERROR_MESSAGE)
 
         setLoading(false)
     }

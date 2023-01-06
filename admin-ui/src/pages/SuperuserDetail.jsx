@@ -1,16 +1,24 @@
 import { createSignal, Show } from "solid-js"
 import { FiChevronLeft, FiTrash2 } from 'solid-icons/fi'
-import { useRouteData, useParams, A } from "@solidjs/router"
+import { useRouteData, useParams, A, useNavigate } from "@solidjs/router"
 import TextInput from '@/components/TextInput'
 import DeleteButton from "../components/DeleteButton"
 import { userDelete, userUpdate } from "../api/user"
+import { failed, success } from "../components/Toaster"
+
+const FAILED_DELETE_MESSAGE  = 'terjadi kesalahan pada server, saat menghapus data user'
+const FAILED_UPDATE_MESSAGE  = 'terjadi kesalahan pada server, saat mengubah data user'
+const SUCCESS_DELETE_MESSAGE = 'berhasil menghapus user'
+const SUCCESS_UPDATE_MESSAGE = 'berhasil mengubah user'
+const INVALID_ERRORS_MESSAGE = 'data yang anda masukan tidak valid'
+const SUCCESS_REDIRECT = '/superuser'
 
 function SuperuserDetail() {
     const data = useRouteData()
     const params = useParams()
+    const navigate = useNavigate()
 
     const [errors, setErrors] = createSignal({})
-    const [hasError, setHasError] = createSignal(undefined)
     const [loading, setLoading] = createSignal(false)
 
     const handleSubmit = async e => {
@@ -21,12 +29,20 @@ function SuperuserDetail() {
 
         setLoading(true)
         setErrors({})     
-        hasError() && setHasError(undefined)   
         
         const result = await userUpdate(params.id, userData)
-        result.invalid_errors && setErrors(result.invalid_errors)
-        result.user && alert('success')
-        result.error && setHasError(result.error)
+        if(result.invalid_errors) {
+            setErrors(result.invalid_errors)
+            failed(INVALID_ERRORS_MESSAGE)
+        }
+        if(result.user) {
+            navigate(SUCCESS_REDIRECT)
+            success(SUCCESS_UPDATE_MESSAGE)
+        }
+        if(result.error) {
+            failed(FAILED_UPDATE_MESSAGE)
+            import.meta.env.DEV && console.log(result.error)
+        }
 
 
         setLoading(false)
@@ -34,14 +50,17 @@ function SuperuserDetail() {
 
     const handleDelete = async e => {
         setLoading(true)
-        hasError() && setHasError(undefined)
 
-        const result = await userDelete(params.id)
-        result.error && setHasError(result.error)
+        const result = await userDelete(params.id) 
+        if(result.error) {
+            failed(FAILED_DELETE_MESSAGE)
+            import.meta.env.DEV && console.log(result.error)
+        }
+        if(result.user){
+            navigate(SUCCESS_REDIRECT)
+            success(SUCCESS_DELETE_MESSAGE)
+        }
         
-        /** @todo implement if success */
-        console.log(result)
-
         setLoading(false)
     }
 
@@ -60,11 +79,7 @@ function SuperuserDetail() {
             <p>loading...</p>
         </Show>
 
-        <Show when={hasError()}>
-            <p>{hasError()}</p>
-        </Show>
-
-        <Show when={!data.loading && !hasError()}>
+        <Show when={!data.loading}>
             <Show when={data().user}>
                 <form onSubmit={handleSubmit} className="grid gap-4 lg:grid-cols-2">
                     <TextInput 
