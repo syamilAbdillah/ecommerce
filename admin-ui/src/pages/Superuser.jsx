@@ -21,7 +21,6 @@ export default function() {
 	})
 
 	const next = e => {
-		console.log(searchParams.page)
 		setSearchParams({
 			page: searchParams.page? Number(searchParams.page) + 1: 2
 		})
@@ -39,7 +38,7 @@ export default function() {
 
 			<Show when={data?.().users && data?.().total}>
 				<p>total : {data().total}</p>
-				<Table data={data().users} columns={['#', 'profile', 'name', 'email', '...']}>
+				<Table data={data().users} columns={['#', 'profile', 'nama', 'email', '...']}>
 					{(user, index)=> <tr key={user.id} onClick={selected(user.id)}>
 						<td>{(index() + 1) + (searchParams.page ? ((searchParams.take ? Number(searchParams.take): data().users.length) * (Number(searchParams.page) - 1)): 0)}</td>
 						<td>

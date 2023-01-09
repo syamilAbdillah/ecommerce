@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"errors"
 
 	"github.com/syamilAbdillah/ecommerce/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -30,7 +29,7 @@ func UserCreate(ctx context.Context, u *model.User) error {
 
 	id, ok := res.InsertedID.(primitive.ObjectID)
 	if !ok {
-		return errors.New("[mongo-driver] res.insertedID is not primitive.ObjectID")
+		return insertedIDErr
 	}
 
 	u.Id = id

@@ -10,6 +10,11 @@ import SuperuserDetailData from './pages/SuperuserDetailData'
 const SuperuserCreatePage = lazy(() => import('./pages/SuperuserCreate.jsx'))
 
 const ProductPage = lazy(() => import('./pages/Product.jsx'))
+import { productData } from './pages/ProductData'
+const ProductCreatePage = lazy(() => import('./pages/ProductCreate'))
+const ProductDetailPage = lazy(() => import('./pages/ProductDetail'))
+import { productDetailData } from './pages/ProductDetailData'
+
 const LoginPage = lazy(() => import('./pages/Login.jsx'))
 const HomePage = lazy(() => import('./pages/Home.jsx'))
 
@@ -34,7 +39,22 @@ function App() {
 					data={SuperuserData}
 				></Route>
 			</Route> 
-			<Route path="/produk" component={ProductPage}></Route>
+			<Route path="/produk">
+				<Route 
+					path="/tambah" 
+					component={ProductCreatePage} 
+				></Route>
+				<Route 
+					path="/:id" 
+					component={ProductDetailPage} 
+					data={productDetailData}
+				></Route>
+				<Route 
+					path="/" 
+					component={ProductPage} 
+					data={productData}
+				></Route>
+			</Route>
 			<Route path="/" component={HomePage}></Route>
 		</Route>
 		<Route path="/login" component={LoginPage}></Route>

@@ -38,6 +38,11 @@ var (
 	}
 )
 
+// returing json with format {"error": "<error message here>"}
+func FormatErrResp(err string) []byte {
+	return []byte(fmt.Sprintf(`{"error": "%s"}`, err))
+}
+
 // wrap internal server error
 func InternalErr(err error) *ErrorResponse {
 	return &ErrorResponse{

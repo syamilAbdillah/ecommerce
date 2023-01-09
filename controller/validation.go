@@ -45,3 +45,19 @@ func validateStruct(s interface{}) ValidationErrors {
 
 	return errors
 }
+
+type BadValue struct {
+	Rule  string `json:"rule"`
+	Param string `json:"param,omitempty"`
+}
+
+type BadValueMap map[string]BadValue
+
+// take "github.com/go-playground/validator/v10" validator.ValidationErrors and transform it to BadValueMap
+func toBadValueMap(errs validator.ValidationErrors) BadValueMap {
+	m := BadValueMap{}
+	for _, fieldErr := range errs {
+		m[fieldErr.Field()] = BadValue{fieldErr.Tag(), fieldErr.Param()}
+	}
+	return m
+}

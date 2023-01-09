@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 )
 
 func Init() http.Handler {
@@ -17,11 +16,12 @@ func Init() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(cors())
-	r.Use(render.SetContentType(render.ContentTypeJSON))
+	r.Use(contentTypeJson)
 	r.Get("/ping", ping)
 
 	// initialize handler
 	r.Route("/users", UserRoute)
+	r.Route("/products", ProductRoute)
 
 	return r
 }
