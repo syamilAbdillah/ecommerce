@@ -11,9 +11,7 @@ const FAILED_DELETE_MESSAGE = 'terjadi kesalahan, gagal menghapus produk'
 const SUCCESS_UPDATE_MESSAGE = 'berhasil mengubah data produk'
 const FAILED_UPDATE_MESSAGE = 'terjadi kesalahan, gagal mengubah produk'
 const SUCCESS_REDIRECT = '/produk'
-const PRODUCT_CREATED_MESSAGE = 'berhasil menambahkan data produk baru'
 const INVALID_ERRORS_MESSAGE = 'data yang anda masukan tidak valid'
-const INTERNAL_ERROR_MESSAGE = 'terjadi kesalahan pada server, saat manambahkan user'
 /**
  * @todo upload image not yet implemented, so use this source instead
  */
@@ -36,7 +34,7 @@ function ProductDetail() {
         const result = await productUpdate(params.id, productData)
 
         if(result.error) {
-            failed(INTERNAL_ERROR_MESSAGE)
+            failed(FAILED_UPDATE_MESSAGE)
             import.meta.env.DEV && console.error(result.error)
         }
 

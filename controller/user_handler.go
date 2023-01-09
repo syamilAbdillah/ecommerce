@@ -103,12 +103,12 @@ func UserFind(userCount dbUserCount, userFind dbUserFind) http.HandlerFunc {
 		}
 
 		errc := make(chan error)
-		total := make(chan int64)
+		totalc := make(chan int64)
 
 		go func() {
 			t, err := userCount(r.Context(), role)
 			errc <- err
-			total <- t
+			totalc <- t
 		}()
 
 		uu, err := userFind(r.Context(), role, take, skip)
@@ -117,12 +117,14 @@ func UserFind(userCount dbUserCount, userFind dbUserFind) http.HandlerFunc {
 			return
 		}
 
-		if <-errc != nil {
-			respondWithInternalErr(w, <-errc)
+		err = <-errc
+		if err != nil {
+			respondWithInternalErr(w, err)
 			return
 		}
 
-		respondWith(w, J{"users": uu, "total": <-total})
+		total := <-totalc
+		respondWith(w, J{"users": uu, "total": total})
 	}
 }
 

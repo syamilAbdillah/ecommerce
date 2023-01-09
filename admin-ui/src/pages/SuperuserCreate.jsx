@@ -32,7 +32,15 @@ function SuperuserCreate() {
         }
 
         if(result.invalid_errors) {
-            setErrors(result.invalid_errors)
+            const ie = result.invalid_errors
+            const errs = {}
+            for(let key of Object.keys(ie)) {
+                errs[key] = dispatch(ie[key].rule, ie[key].param)
+            }
+
+            import.meta.env.DEV && console.log(result.invalid_errors, errs)
+            
+            setErrors(errs)
             failed(INVALID_ERRORS_MESSAGE)
         }
 

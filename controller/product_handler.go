@@ -121,7 +121,7 @@ func ProductCreate(create dbProductWrite) http.HandlerFunc {
 	}
 }
 
-func ProductUpdate(getOne dbProductGetById, update dbProductWrite) http.HandlerFunc {
+func ProductUpdate(update dbProductWrite) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := r.Context().Value(productCtxKey).(*model.Product)
 		if !ok {
@@ -157,7 +157,7 @@ func ProductUpdate(getOne dbProductGetById, update dbProductWrite) http.HandlerF
 	}
 }
 
-func ProductDelete(getOne dbProductGetById, delete dbProductDelete) http.HandlerFunc {
+func ProductDelete(delete dbProductDelete) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		p, ok := r.Context().Value(productCtxKey).(*model.Product)
@@ -209,7 +209,7 @@ func ProductRoute(r chi.Router) {
 	r.Route("/{id}", func(r chi.Router) {
 		r.Use(ProductCtx(db.ProductGetById))
 		r.Get("/", ProductGet())
-		r.Put("/", ProductUpdate(db.ProductGetById, db.ProductUpdate))
-		r.Delete("/", ProductDelete(db.ProductGetById, db.ProductDelete))
+		r.Put("/", ProductUpdate(db.ProductUpdate))
+		r.Delete("/", ProductDelete(db.ProductDelete))
 	})
 }

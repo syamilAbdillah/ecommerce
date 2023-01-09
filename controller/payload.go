@@ -3,20 +3,36 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
-	"github.com/go-chi/render"
-	"github.com/syamilAbdillah/ecommerce/model"
+	"github.com/go-playground/validator/v10"
 )
 
 // map[string]interface{} shortcut for convinience reason
 type J map[string]interface{}
 
+type BadValue struct {
+	Rule  string `json:"rule"`
+	Param string `json:"param,omitempty"`
+}
+
+type BadValueMap map[string]BadValue
+
+// take "github.com/go-playground/validator/v10" validator.ValidationErrors and transform it to BadValueMap
+func toBadValueMap(errs validator.ValidationErrors) BadValueMap {
+	m := BadValueMap{}
+	for _, fieldErr := range errs {
+		m[fieldErr.Field()] = BadValue{fieldErr.Tag(), fieldErr.Param()}
+	}
+	return m
+}
+
 func respondWith(w http.ResponseWriter, v interface{}, status ...int) {
 	var buff bytes.Buffer
 	if err := json.NewEncoder(&buff).Encode(v); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(FormatErrResp(err.Error()))
+		w.Write([]byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())))
 		return
 	}
 
@@ -36,91 +52,4 @@ func respondWithNotFound(w http.ResponseWriter) {
 
 func respondWithInternalErr(w http.ResponseWriter, err error) {
 	respondWith(w, J{"error": err.Error()}, http.StatusInternalServerError)
-}
-
-/*
-*
-*
-*
-*
-*
-*
-*
-======================================================================================
-
-	ERROR
-
-======================================================================================
-*/
-type ErrorResponse struct {
-	HTTPStatusCode int              `json:"-"`
-	ErrText        string           `json:"error,omitempty"`
-	ValidationErr  ValidationErrors `json:"invalid_errors,omitempty"`
-}
-
-func (er *ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	render.Status(r, er.HTTPStatusCode)
-	return nil
-}
-
-/*
-*
-*
-*
-*
-*
-*
-*
-======================================================================================
-
-	USER
-
-======================================================================================
-*/
-type userResponse struct {
-	User  *model.User   `json:"user,omitempty"`
-	Users []*model.User `json:"users,omitempty"`
-	Total int64         `json:"total,omitempty"`
-}
-
-func (u *userResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	if u.User != nil {
-		u.User.Password = ""
-	}
-	return nil
-}
-
-type userPayload struct {
-	model.User
-}
-
-func (u *userPayload) Bind(r *http.Request) error {
-	ve := validateStruct(u)
-	if len(ve) > 0 {
-		return ve
-	}
-	return nil
-}
-
-type productResponse struct {
-	Product  *model.Product   `json:"product,omitempty"`
-	Products []*model.Product `json:"products,omitempty"`
-	Total    int64            `json:"total,omitempty"`
-}
-
-func (pr *productResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-type productPayload struct {
-	model.Product
-}
-
-func (pp *productPayload) Bind(r *http.Request) error {
-	ve := validateStruct(pp)
-	if len(ve) > 0 {
-		return ve
-	}
-
-	return nil
 }

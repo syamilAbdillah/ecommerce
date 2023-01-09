@@ -1,36 +1,26 @@
 import { Show } from "solid-js"
-import { FiChevronRight, FiPlusSquare } from 'solid-icons/fi'
+import { FiChevronRight } from 'solid-icons/fi'
 import Table from "../components/Table"
 import Avatar from "../components/Avatar"
-import { A, useNavigate, useRouteData, useSearchParams } from "@solidjs/router"
+import { useNavigate, useRouteData } from "@solidjs/router"
+import { usePaginate } from '../components/usePaginate'
+import { Paginate } from '../components/Paginate'
+import { CreatePageButton } from '../components/Buttons'
 
 
 export default function() {
 	const data = useRouteData()
 	const navigate = useNavigate()
-	const [searchParams, setSearchParams] = useSearchParams()
-	
+	const paginate = usePaginate()
+
 	const selected = id => e => {
 		if(e.detail == 2) {
 			navigate(`/superuser/${id}`)
 		}
 	}
 
-	const prev = e => setSearchParams({
-		page: searchParams.page? Number(searchParams.page) -1: 1
-	})
-
-	const next = e => {
-		setSearchParams({
-			page: searchParams.page? Number(searchParams.page) + 1: 2
-		})
-	}
-
 	return (<>
-		<A href="/superuser/tambah" inactiveClass="btn btn-neutral mb-4">
-			<span>superuser baru</span>
-			<FiPlusSquare></FiPlusSquare>
-		</A>
+		<CreatePageButton href="/superuser/tambah">superuser baru</CreatePageButton>
 		<Show when={!data.loading}>
 			<Show when={data?.().error}>
 				<p>{data().error}</p>
@@ -40,7 +30,7 @@ export default function() {
 				<p>total : {data().total}</p>
 				<Table data={data().users} columns={['#', 'profile', 'nama', 'email', '...']}>
 					{(user, index)=> <tr key={user.id} onClick={selected(user.id)}>
-						<td>{(index() + 1) + (searchParams.page ? ((searchParams.take ? Number(searchParams.take): data().users.length) * (Number(searchParams.page) - 1)): 0)}</td>
+						<td>{(index() + 1) + paginate.skip()}</td>
 						<td>
 							<Avatar src={user.profile_picture} alt={user.id + '-' + user.name} />
 						</td>
@@ -52,18 +42,12 @@ export default function() {
 					</tr>}
 				</Table>
 
-				<div className="flex justify-between py-4">
-					<button 
-						className="btn btn-neutral" 
-						onClick={prev}
-						disabled={!searchParams.page?.length || (Number(searchParams.page) < 2)}
-					>prev</button>
-					<button 
-						className="btn btn-neutral" 
-						onClick={next}
-						disabled={data().total <= (searchParams.take ? Number(searchParams.take): data().users.length) * (searchParams.page || 1)}
-					>next</button>
-				</div>
+				<Paginate
+					onNext={paginate.next}
+					onPrev={paginate.prev}
+					isNextDisabled={(paginate.skip() + data().users.length) >= data().total}
+					isPrevDisabled={paginate.page() < 2}
+				/>
 			</Show>
 		</Show>
 

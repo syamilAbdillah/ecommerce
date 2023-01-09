@@ -2,13 +2,21 @@ package controller
 
 import (
 	"net/http"
+	"reflect"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-playground/validator/v10"
 )
 
+// single instance of go-validator
+var validate *validator.Validate
+
 func Init() http.Handler {
-	validateInit()
+	validate = validator.New()
+	validate.RegisterTagNameFunc(validatorRegisterTagName)
+
 	r := chi.NewRouter()
 
 	// middleware setup
@@ -28,4 +36,12 @@ func Init() http.Handler {
 
 func ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"ping": "pong"}`))
+}
+
+func validatorRegisterTagName(fld reflect.StructField) string {
+	name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+	if name == "-" {
+		return ""
+	}
+	return name
 }

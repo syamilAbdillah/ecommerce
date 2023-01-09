@@ -9,7 +9,7 @@ import TextInput from "../components/TextInput"
 
 const PRODUCT_CREATED_MESSAGE = 'berhasil menambahkan data produk baru'
 const INVALID_ERRORS_MESSAGE = 'data yang anda masukan tidak valid'
-const INTERNAL_ERROR_MESSAGE = 'terjadi kesalahan pada server, saat manambahkan user'
+const INTERNAL_ERROR_MESSAGE = 'terjadi kesalahan pada server, saat manambah produk'
 /**
  * @todo upload image not yet implemented, so use this source instead
  */
