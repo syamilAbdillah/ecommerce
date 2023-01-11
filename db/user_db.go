@@ -48,7 +48,7 @@ func UserFind(
 	limit int64,
 	skip int64,
 ) ([]*model.User, error) {
-	var uu []*model.User
+	uu := []*model.User{}
 	filter := bson.M{}
 	opt := options.Find().
 		SetLimit(limit).

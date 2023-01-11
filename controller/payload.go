@@ -53,3 +53,7 @@ func respondWithNotFound(w http.ResponseWriter) {
 func respondWithInternalErr(w http.ResponseWriter, err error) {
 	respondWith(w, J{"error": err.Error()}, http.StatusInternalServerError)
 }
+
+func respondWithUnauthorized(w http.ResponseWriter) {
+	respondWith(w, J{"error": "UNAUTHORIZED"}, http.StatusUnauthorized)
+}

@@ -3,6 +3,7 @@ import { A, useBeforeLeave } from '@solidjs/router'
 import { FiUser, FiHome, FiPackage, FiMenu } from 'solid-icons/fi'
 import { clickOutside } from './directives'
 import Avatar from './Avatar'
+import { useLogoutService } from './serviceAuth'
 
 const [active, setActive] = createSignal(false)
 const open = () => setActive(true)
@@ -103,6 +104,9 @@ function SidebarFooter(props){
 	const [show, setShow] = createSignal(false)
 	const open = () => setShow(true)
 	const close = () => setShow(false)
+
+	const logoutServ = useLogoutService()
+
 	return(
 		<div className="flex flex-col border w-full">
 			<div className="flex-0 flex items-center gap-2 p-4 cursor-pointer" onClick={open} use:clickOutside={close}>
@@ -118,7 +122,15 @@ function SidebarFooter(props){
 			<Show when={show()}>
 				<div className="flex flex-col gap-2 p-2 mb-4">
 					<button className="btn bg-gray-200">view your profile</button>
-					<button className="btn bg-rose-100 text-rose-600">logout</button>
+					<button 
+						onClick={logoutServ.logout} 
+						className="btn bg-rose-100 text-rose-600"
+						classList={{
+							'bg-rose-100 text-rose-600': !logoutServ.loading(),
+							'bg-gray-100 text-gray-600': logoutServ.loading(),
+						}}
+						disabled={logoutServ.loading()}
+					>{logoutServ.loading() ? 'loading...': 'logout'}</button>
 				</div>
 			</Show>
 		</div>

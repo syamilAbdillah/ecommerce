@@ -2,11 +2,15 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	chiCors "github.com/go-chi/cors"
+	"github.com/gorilla/sessions"
+	"github.com/syamilAbdillah/ecommerce/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func cors() func(http.Handler) http.Handler {
@@ -45,6 +49,81 @@ func paginate(next http.Handler) http.Handler {
 func contentTypeJson(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		next.ServeHTTP(w, r)
+	})
+}
+
+type getSession func(*http.Request, string) (*sessions.Session, error)
+
+func getUserFromSession(
+	getOne dbUserGetById,
+	getSess getSession,
+) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			g := &model.User{Role: model.RoleGuest}
+
+			sess, err := getSess(r, SESSION_NAME)
+			if err != nil {
+				respondWithInternalErr(w, err)
+				return
+			}
+
+			if sess.IsNew {
+				ctx := context.WithValue(r.Context(), CURRENT_USER_CTX_KEY, g)
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
+
+			strid, ok := sess.Values[SESSION_ID_KEY].(string)
+			if !ok {
+				respondWithInternalErr(w, errors.New("INTERNAL_SERVER_ERROR"))
+				return
+			}
+
+			id, err := primitive.ObjectIDFromHex(strid)
+			if err != nil {
+				respondWithInternalErr(w, err)
+				return
+			}
+
+			u, err := getOne(r.Context(), id)
+			if err != nil {
+				respondWithInternalErr(w, err)
+				return
+			}
+
+			if u == nil {
+				ctx := context.WithValue(r.Context(), CURRENT_USER_CTX_KEY, g)
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), CURRENT_USER_CTX_KEY, u)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+func superuserOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		u, ok := r.Context().Value(CURRENT_USER_CTX_KEY).(*model.User)
+		if !ok {
+			respondWithInternalErr(w, errors.New("INTERNAL_SERVER_ERROR"))
+			return
+		}
+
+		if u == nil {
+			respondWithUnauthorized(w)
+			return
+		}
+
+		if u.Role != model.RoleSuperuser {
+			respondWithUnauthorized(w)
+			return
+		}
+
+		fmt.Printf("current_user: %s \n", u.Email)
 		next.ServeHTTP(w, r)
 	})
 }

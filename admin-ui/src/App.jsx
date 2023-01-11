@@ -1,5 +1,6 @@
-import { lazy } from 'solid-js'
+import { lazy, onMount, Show } from 'solid-js'
 import { Routes, Route } from '@solidjs/router'
+import { Toaster } from './components/Toaster'
 
 const DashboardLayout = lazy(() => import('./pages/DashboardLayout.jsx'))
 
@@ -14,51 +15,66 @@ import { productData } from './pages/ProductData'
 const ProductCreatePage = lazy(() => import('./pages/ProductCreate'))
 const ProductDetailPage = lazy(() => import('./pages/ProductDetail'))
 import { productDetailData } from './pages/ProductDetailData'
+import { useAuthenticateService } from './components/serviceAuth'
 
-const LoginPage = lazy(() => import('./pages/Login.jsx'))
 const HomePage = lazy(() => import('./pages/Home.jsx'))
+const LoginPage = lazy(() => import('./pages/Login'))
 
 function App() {
-	return <Routes>
-		<Route path="/" component={DashboardLayout}>
-			<Route 
-				path="/superuser"
-			>
-				<Route 
-					path="/tambah" 
-					component={SuperuserCreatePage}
-				></Route>
-				<Route
-					path="/:id"
-					component={SuperuserDetailPage}
-					data={SuperuserDetailData}
-				></Route>
-				<Route 
-					path="/" 
-					component={SuperuserPage} 
-					data={SuperuserData}
-				></Route>
-			</Route> 
-			<Route path="/produk">
-				<Route 
-					path="/tambah" 
-					component={ProductCreatePage} 
-				></Route>
-				<Route 
-					path="/:id" 
-					component={ProductDetailPage} 
-					data={productDetailData}
-				></Route>
-				<Route 
-					path="/" 
-					component={ProductPage} 
-					data={productData}
-				></Route>
-			</Route>
-			<Route path="/" component={HomePage}></Route>
-		</Route>
-		<Route path="/login" component={LoginPage}></Route>
-	</Routes>
+	const authServ = useAuthenticateService()
+
+	onMount(() => authServ.authenticate())
+
+	return <>
+		<Toaster/>
+		<Show when={authServ.loading()}>
+			<div className="flex justify-center w-auto py-12">
+				<span className="text-2xl">authenticating....</span>
+			</div>
+		</Show>
+		<Show when={!authServ.loading()}>
+			<Routes>
+				<Route path="/" component={DashboardLayout}>
+					<Route 
+						path="/superuser"
+					>
+						<Route 
+							path="/tambah" 
+							component={SuperuserCreatePage}
+						></Route>
+						<Route
+							path="/:id"
+							component={SuperuserDetailPage}
+							data={SuperuserDetailData}
+						></Route>
+						<Route 
+							path="/" 
+							component={SuperuserPage} 
+							data={SuperuserData}
+						></Route>
+					</Route> 
+					<Route path="/produk">
+						<Route 
+							path="/tambah" 
+							component={ProductCreatePage} 
+						></Route>
+						<Route 
+							path="/:id" 
+							component={ProductDetailPage} 
+							data={productDetailData}
+						></Route>
+						<Route 
+							path="/" 
+							component={ProductPage} 
+							data={productData}
+						></Route>
+					</Route>
+					<Route path="/" component={HomePage}></Route>
+				</Route>
+				<Route path="/login" component={LoginPage}/>
+			</Routes>
+		</Show>
+	</>
 }
 
 export default App

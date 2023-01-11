@@ -1,5 +1,5 @@
 import { createResource } from 'solid-js'
-import { productFind } from '@/api/product'
+import { productFind } from '../api/product'
 import { usePaginate } from '../components/usePaginate'
 
 export function productData() {
@@ -8,5 +8,6 @@ export function productData() {
         () => ({ take: paginate.take(), page: paginate.page() }),
         p => productFind(p)
     )
+
     return data 
 }

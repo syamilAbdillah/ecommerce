@@ -5,19 +5,18 @@ go 1.19
 require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.1
-	github.com/go-chi/render v1.0.2
 	github.com/go-playground/validator/v10 v10.11.1
+	github.com/gorilla/sessions v1.2.1
 	github.com/joho/godotenv v1.4.0
-	github.com/mattn/go-sqlite3 v1.14.16
 	go.mongodb.org/mongo-driver v1.11.1
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 )
 
 require (
-	github.com/ajg/form v1.5.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect

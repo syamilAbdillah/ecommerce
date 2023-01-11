@@ -204,12 +204,16 @@ func ProductCtx(getOne dbProductGetById) func(http.Handler) http.Handler {
 }
 
 func ProductRoute(r chi.Router) {
-	r.Post("/", ProductCreate(db.ProductCreate))
 	r.With(paginate).Get("/", ProductFind(db.ProductFind, db.ProductCount))
+	r.With(superuserOnly).Post("/", ProductCreate(db.ProductCreate))
+
 	r.Route("/{id}", func(r chi.Router) {
 		r.Use(ProductCtx(db.ProductGetById))
 		r.Get("/", ProductGet())
-		r.Put("/", ProductUpdate(db.ProductUpdate))
-		r.Delete("/", ProductDelete(db.ProductDelete))
+
+		r.With(superuserOnly).Group(func(r chi.Router) {
+			r.Put("/", ProductUpdate(db.ProductUpdate))
+			r.Delete("/", ProductDelete(db.ProductDelete))
+		})
 	})
 }
