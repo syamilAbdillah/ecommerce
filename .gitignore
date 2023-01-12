@@ -28,3 +28,30 @@ admin-ui/*.njsproj
 admin-ui/*.sln
 admin-ui/*.sw?
 admin-ui/.env
+
+
+# Logs
+public-ui/logs
+public-ui/*.log
+public-ui/npm-debug.log*
+public-ui/yarn-debug.log*
+public-ui/yarn-error.log*
+public-ui/pnpm-debug.log*
+public-ui/lerna-debug.log*
+
+public-ui/node_modules/
+public-ui/dist
+public-ui/dist-ssr
+public-ui/*.local
+
+# Editor directories and files
+public-ui/.vscode/*
+!public-ui/.vscode/extensions.json
+public-ui/.idea
+public-ui/.DS_Store
+public-ui/*.suo
+public-ui/*.ntvs*
+public-ui/*.njsproj
+public-ui/*.sln
+public-ui/*.sw?
+public-ui/.env
