@@ -1,24 +1,20 @@
 <script>
   import { PlusIcon } from 'svelte-feather-icons'
   import Products from './lib/Products.svelte';
-  import Counter from './lib/Counter.svelte';
-
-  let show = false
-
+  import Header from './lib/Header.svelte'
+  import Toaster from './lib/Toaster.svelte'
+  import Cart from './lib/Cart.svelte'
 </script>
 
-<main class="min-h-screen flex flex-col items-center gap-4 py-8 px-4">
-  <h1 class="text-2xl font-semibold">Vite + Svelte</h1>
 
+
+<main class="min-h-screen relative flex flex-col items-center gap-4 pt-12 pb-8">
+  <Toaster></Toaster>
+  <Cart/>
+  <Header/>
   <PlusIcon/> 
-
-  <button class="btn btn-neutral" on:click={() => show = !show}> products toggle</button>
-
-  {#if show}
-    <Products />
-  {:else}
-    <Counter/>
-  {/if}
-
-
+  <Products />
 </main>
+
+
+

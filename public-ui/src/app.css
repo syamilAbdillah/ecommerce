@@ -2,11 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 
 @layer components {
 /* button */
   .btn {
-    @apply inline-flex items-center justify-center gap-3 rounded px-4 py-2 font-medium outline-2 transition active:scale-95;
+    @apply inline-flex items-center justify-center py-3 px-4 font-medium outline-2 transition active:scale-95;
   }
 
   .btn:disabled {
@@ -30,11 +37,11 @@
   }
 
   .btn-primary {
-    @apply bg-indigo-700 text-white;
+    @apply bg-indigo-600 text-white;
   }
 
   .btn-primary:hover {
-    @apply bg-indigo-600;
+    @apply bg-indigo-500;
   }
 
 }
