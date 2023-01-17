@@ -3,12 +3,12 @@
  * @param {string} baseURL 
  * @returns 
  */
-export function createRequesAPI(baseURL = '') {
+export function createRequest(baseURL = '') {
     /**
      * 
      * 
      * @param {string} subURL url = baseURL + subURL 
-     * @param {Object} opt fetch option
+     * @param {Object} options fetch option
      * @returns {Promise<{error?: string, httpStatusCode: number}>}
      */
     async function requestAPI(subURL = '', options = {}) {
@@ -44,3 +44,5 @@ export function createRequesAPI(baseURL = '') {
 
     return requestAPI  
 }
+
+export const req = createRequest(import.meta.env.VITE_API_URL)

@@ -1,16 +1,7 @@
 import { defineConfig } from 'vite'
-import solid from 'vite-plugin-solid'
-import path from 'path'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [solid()],
-  server: {
-    port: 3210,
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    }
-  },
+  plugins: [svelte()],
 })
