@@ -1,0 +1,1 @@
+export const rand = () => Math.floor(Math.random() * 10e9) + '-' + Date.now()
