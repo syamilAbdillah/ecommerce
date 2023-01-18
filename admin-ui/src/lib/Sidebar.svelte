@@ -1,29 +1,31 @@
-<script context="module">
-	import { writable } from 'svelte/store'
-
-	const show = writable(true)
-	const toggle = () => show.update(s => !s)
-	const close = () => show.set(false)
-</script>
-
 <script>
-	import { active } from 'tinro'
-	import { MenuIcon, XIcon } from 'svelte-feather-icons'
+	import { active, router } from 'tinro'
+	import { ChevronLeftIcon } from 'svelte-feather-icons'
+	import ProfileCard from './ProfileCard.svelte'
+
+	let show = false
+	const close = () => show = false
+	const toggle = () => show = !show
+
+	$: $router && close()
 </script>
 
-{#if $show}
-	<div class="bg-slate-500/25 fixed inset-0 lg:hidden" on:click={close}></div>
-{/if}
-<div class="h-screen w-64 bg-white fixed lg:static lg:translate-x-0 flex flex-col gap-2 p-4 transition" class:-translate-x-64={!$show} >
-	<a use:active class="py-3 px-4 rounded transition font-semibold hover:bg-slate-50 active:scale-95 text-slate-400" data-exact href="/" >Home</a>
-	<a use:active class="py-3 px-4 rounded transition font-semibold hover:bg-slate-50 active:scale-95 text-slate-400" href="/superuser" >Superuser</a>
-	<a use:active class="py-3 px-4 rounded transition font-semibold hover:bg-slate-50 active:scale-95 text-slate-400" href="/produk" >Produk</a>
+<div 
+	class="bg-slate-500/25 fixed inset-0 lg:hidden"
+	class:hidden={!show}
+	on:click={close}
+></div>
+<div class="h-screen w-64 bg-white fixed lg:static lg:translate-x-0 flex flex-col gap-2 p-4 transition" class:-translate-x-64={!show} >
+	<div class="mb-6">
+		<ProfileCard/>
+	</div>
+	<a use:active class="py-3 px-4 rounded transition font-medium hover:bg-slate-50 active:scale-95 text-slate-400" data-exact href="/" >Home</a>
+	<a use:active class="py-3 px-4 rounded transition font-medium hover:bg-slate-50 active:scale-95 text-slate-400" href="/superuser" >Superuser</a>
+	<a use:active class="py-3 px-4 rounded transition font-medium hover:bg-slate-50 active:scale-95 text-slate-400" href="/produk" >Produk</a>
 
 	<button class="absolute bg-white top-2 -right-10 rounded-r-lg w-12 h-12 flex justify-center items-center lg:hidden" on:click={toggle}>
-		{#if $show}
-			<XIcon size="16" />
-		{:else}
-			<MenuIcon size="16" />
-		{/if}
+		<div class="transition" class:rotate-180={!show}>
+			<ChevronLeftIcon size="16"/>
+		</div>
 	</button>
 </div>

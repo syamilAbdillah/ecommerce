@@ -18,7 +18,7 @@
 
 /* button */
   .btn {
-    @apply inline-flex items-center justify-center py-3 px-4 font-medium transition active:scale-95;
+    @apply inline-flex items-center justify-center py-3 px-4 font-medium rounded transition active:scale-95;
   }
 
   .btn:disabled {
