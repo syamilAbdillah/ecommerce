@@ -5,17 +5,12 @@
     import Lazy from './lib/Lazy.svelte'
 
     const Dashboard = import('./lib/Dashboard.svelte')
-    const LoginPage = import('./lib/LoginPage.svelte')
+    const PageLogin = import('./lib/PageLogin.svelte')
 
     const {loading, authenticate} = useAuthenticate()
     authenticate()
 
-    $: {
-        if($user) {
-            console.log($user)
-            push(`selamat data kembali ${$user.name}`)
-        }
-    }
+    $: if($user) push(`selamat data kembali ${$user.name}`)
 </script>
 
 
@@ -29,7 +24,7 @@
     {#if $user}
         <Lazy component={Dashboard}/>
     {:else}
-        <Lazy component={LoginPage}>
+        <Lazy component={PageLogin}>
             <div class="min-h-screen flex justify-center items-center" slot="loading">
                 <Loading/>
             </div>

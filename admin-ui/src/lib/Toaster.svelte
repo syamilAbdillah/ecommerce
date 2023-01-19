@@ -21,7 +21,7 @@
 </script>
 
 {#if $store.length}
-	<div class="fixed top-6 left-0 right-0 z-40 w-96 mx-auto grid gap-2">
+	<div class="fixed top-6 left-0 right-0 z-40 w-72 sm:w-96 mx-auto grid gap-2">
 		{#each $store as item,_ (item.id)}
 			<ToasterItem {...item} on:remove={handleRemove} />
 		{/each}

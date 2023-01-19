@@ -1,6 +1,7 @@
 <script>
     import { Route } from 'tinro'
     import DashboardLayout from './DashboardLayout.svelte'
+    import Lazy from './Lazy.svelte'
 </script>
 
 <DashboardLayout>
@@ -8,7 +9,11 @@
         <p>home index</p>
     </Route>
     <Route path="/superuser">
-        <p>superuser index</p>
+        <Lazy 
+            component={
+                () => import('./PageSuperuser.svelte')
+            } 
+        />
     </Route>
     <Route path="/produk">
         <p>produk index</p>

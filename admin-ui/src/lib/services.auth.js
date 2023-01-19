@@ -10,6 +10,7 @@ export function useAuthenticate() {
 
 	async function authenticate() {
 		loading.set(true)
+		error.set(undefined)
 
 		const {user, error: err, httpStatusCode} = await req('/auth/me')
 
@@ -34,6 +35,7 @@ export function useLogin() {
 
 	async function login(email, password) {
 		loading.set(true)
+		error.set(undefined)
 		
 		const {httpStatusCode, user, error: err} = await req('/auth/login', {
 			method: 'POST', 
@@ -65,6 +67,7 @@ export function useLogout() {
 
 	async function logout() {
 		loading.set(true)
+		error.set(undefined)
 
 		const {httpStatusCode, error: err} = await req('/auth/logout', {method: 'DELETE'})
 		if(err && httpStatusCode != 401) error.set(err)

@@ -13,12 +13,12 @@
 @layer components {
 /* sidebar */
   a.active {
-    @apply text-slate-700 bg-slate-50;
+    @apply bg-slate-500;
   }
 
 /* button */
   .btn {
-    @apply inline-flex items-center justify-center py-3 px-4 font-medium rounded transition active:scale-95;
+    @apply inline-flex items-center justify-center py-2 px-3 sm:py-3 sm:px-4 font-medium rounded transition active:scale-95;
   }
 
   .btn:disabled {

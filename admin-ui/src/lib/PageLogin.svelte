@@ -3,13 +3,19 @@
 	import { LockIcon, ShieldIcon, LoaderIcon } from 'svelte-feather-icons'
 	import { useLogin } from './services.auth'
 	import TextInput from './TextInput.svelte'
+	import { push } from './Toaster.svelte'
+	import { types } from './ToasterItem.svelte'
 
-	const {login, loading} = useLogin()
+	const {login, loading, error} = useLogin()
 
 	let email
 	let password
-	const handleSubmit = ev => {
-		login(email, password)
+	const handleSubmit = async ev => {
+		const res = await login(email, password)
+	}
+
+	$: {
+		if($error) push($error, types.DANGER)
 	}
 </script>
 
