@@ -10,6 +10,16 @@
 		store.update(s => [toast, ...s])
 	}
 
+	export function pushSuccess(text) {
+		const toast = {id: rand(), text, type: types.SUCCESS}
+		store.update(s => [toast, ...s])
+	}
+
+	export function pushDanger(text) {
+		const toast = {id: rand(), text, type: types.DANGER}
+		store.update(s => [toast, ...s])
+	}
+
 	function remove(id) {
 		store.update(s => s.filter(el => el.id != id))
 	}

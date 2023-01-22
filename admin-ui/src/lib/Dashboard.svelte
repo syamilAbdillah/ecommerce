@@ -8,12 +8,21 @@
     <Route path="/">
         <p>home index</p>
     </Route>
-    <Route path="/superuser">
-        <Lazy 
-            component={
-                () => import('./PageSuperuser.svelte')
-            } 
-        />
+    <Route path="/superuser/*">
+        <Route path="/">
+            <Lazy 
+                component={
+                    () => import('./PageSuperuser.svelte')
+                } 
+            />
+        </Route>
+        <Route path="/tambah">
+            <Lazy 
+                component={
+                    () => import('./PageSuperuserCreate.svelte')
+                } 
+            />
+        </Route>
     </Route>
     <Route path="/produk">
         <p>produk index</p>
