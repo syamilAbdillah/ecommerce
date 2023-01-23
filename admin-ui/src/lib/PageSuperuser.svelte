@@ -1,30 +1,68 @@
 <script>
 	import { fade } from 'svelte/transition'
 	import { PlusCircleIcon } from 'svelte-feather-icons'
-	import { useUserFind } from './services.user'
+	import { useUserFind, useUserRemove } from './services.user'
 	import LoadMoreButton from './LoadMoreButton.svelte'
 	import SuperuserCard from './SuperuserCard.svelte'
 	import Search from './Search.svelte'
 	import ErrorCard from './ErrorCard.svelte'
+	import Confirm from './Confirm.svelte'
+	import { pushDanger, pushSuccess } from './Toaster.svelte'
 
-	const {find, loading, error, users, total} = useUserFind()
+	const {find, next: append, loading, error, users, total} = useUserFind()
 	
 	let take = 4
 	let page = 1
-	
+
 	const next = () => {
 		if($users.length >= $total) return
 
 		page += 1
-		find(take, page)
+		append(take, page)
 	}
 
-	const handleRemove = ev => alert('removing user ' + ev.detail.id)
 	const handleSearch = ev => alert('search value is ' + ev.detail.value)
+	
+	const { loading: rmLoading, error: rmError, user: removed, remove } = useUserRemove()
+
+	let selectedId
+	let confirmOpen = false
+	
+	const handleClose = () => {
+		if($rmLoading) return
+		confirmOpen = false
+	}
+	const handleOpen = ev =>{ 
+		selectedId = ev.detail.id
+		confirmOpen = true
+	}
+	const handleConfirm = async () => remove(selectedId)
 
 	find(take, page)
+
+	$: {
+		if($rmError) {
+			confirmOpen = false
+			selectedId = undefined
+			pushDanger('gagal menghapus user, tolong ulangi')
+		}
+		if($removed && confirmOpen) {
+			confirmOpen = false
+			selectedId = undefined
+			pushSuccess('berhasil menghapus user -> ' + $removed?.email)
+			page = 1
+			find(take, page)
+		}
+	}
 </script>
 
+<Confirm 
+	on:close={handleClose} 
+	on:confirm={handleConfirm} 
+	open={confirmOpen} 
+	text="apa anda yakin ?"
+	loading={$rmLoading}
+/>
 
 <div class="grid gap-4 pb-4 pt-8 px-4">
 	<div class="flex justify-end">
@@ -52,7 +90,7 @@
 				name={user.name}
 				email={user.email}
 				id={user.id}
-				on:remove={handleRemove} 
+				on:remove={handleOpen} 
 			/>
 		{/each}
 

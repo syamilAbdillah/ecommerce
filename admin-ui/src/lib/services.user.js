@@ -1,6 +1,8 @@
 import { writable, derived } from 'svelte/store'
 import { req } from './createRequest'
 
+const readOnly = store => derived(store, $store => $store)
+
 function invalidErrorsMapper(invalid_errors) {
 	const errorsMap = {
 		"min": param => `minimal ${param} karakter`,
@@ -42,6 +44,23 @@ export function useUserFind() {
 		params.append('role', role)
 
 		const res = await req('/users?' + params.toString())
+		if(res.users) users.set(res.users)
+		if(res.total) total.set(res.total)
+		if(res.error) error.set(res.error)
+
+		loading.set(false)
+	}
+
+	async function next(take = 10, page = 1, role = roles.SUPERUSER) {
+		loading.set(true)
+		error.set(undefined)
+
+		const params = new URLSearchParams()
+		params.append('take', take)
+		params.append('page', page)
+		params.append('role', role)
+
+		const res = await req('/users?' + params.toString())
 		if(res.users) users.update(u => [...u, ...res.users])
 		if(res.total) total.set(res.total)
 		if(res.error) error.set(res.error)
@@ -55,6 +74,7 @@ export function useUserFind() {
 		users: derived(users, $users => $users),
 		total: derived(total, $total => $total),
 		find,
+		next,
 	}
 }
 
@@ -66,6 +86,9 @@ export function useUserCreate() {
 
 	async function create(name = '', email = '', password = '') {
 		loading.set(true)
+		error.set(undefined)
+		errors.set({})
+		user.set(undefined)
 
 		const res = await req('/users', {
 			method: 'POST',
@@ -80,11 +103,41 @@ export function useUserCreate() {
 		return res
 	}
 
-	return {user, loading, error, errors, create}
+	return {
+		user: derived(user, $user => $user), 
+		loading: derived(loading, $loading => $loading), 
+		error: derived(error, $error => $error), 
+		errors: derived(errors, $errors => $errors), 
+		create
+	}
 }
 
 export function useUserGet() {}
 
 export function useUserUpdate() {}
 
-export function useUserRemove() {}
+export function useUserRemove() {
+	const loading = writable(false)
+	const error = writable()
+	const user = writable()
+
+	async function remove(id) {
+		loading.set(true)
+		error.set(undefined)
+		user.set(undefined)
+		
+		const res = await req('/users/' + id, { method: 'DELETE' })
+
+		if(res.user) user.set(res.user)
+		if(res.error) error.set(res.error)
+
+		loading.set(false)
+	}
+	
+	return {
+		loading: readOnly(loading),
+		error: readOnly(error),
+		user: readOnly(user),
+		remove,
+	}
+}
