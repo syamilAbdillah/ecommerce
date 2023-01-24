@@ -31,6 +31,17 @@ func run() error {
 		return err
 	}
 
-	fmt.Println("running on port :8080")
-	return http.ListenAndServe(":8080", controller.Init())
+	fmt.Println("running on port " + getPort())
+	return http.ListenAndServe(getPort(), controller.Init())
+}
+
+func getPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":3000"
+	} else {
+		port = ":" + port
+	}
+
+	return port
 }
