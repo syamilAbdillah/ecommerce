@@ -7,7 +7,7 @@
 		<div class="w-64 h-screen bg-gray-50 animate-pulse flex items-center" slot="loading">
 		</div>
 	</Lazy>
-	<div class="grow min-h-screen overflow-x-hidden container mx-auto">
+	<div class="grow min-h-screen container mx-auto">
 		<slot></slot>
 	</div>
 </main>

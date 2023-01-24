@@ -4,7 +4,7 @@
     import { useAuthenticate, user } from './lib/services.auth'
     import Lazy from './lib/Lazy.svelte'
 
-    const Dashboard = import('./lib/Dashboard.svelte')
+    const Dashboard = import('./pages/Dashboard.svelte')
     const PageLogin = import('./lib/PageLogin.svelte')
 
     const {loading, authenticate} = useAuthenticate()

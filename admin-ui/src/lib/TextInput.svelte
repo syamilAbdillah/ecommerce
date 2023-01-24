@@ -1,5 +1,6 @@
 <script>
 	export let label
+	export let name
 	export let error
 	export let value = ''
 	export let type = 'text'
@@ -15,7 +16,7 @@
 	{#if label}
 		<p class="text-sm font-medium text-slate-500 mb-2">{label}</p>
 	{/if}
-	<input {required} {placeholder} {type} {value} on:input={handleInput} class="outline-none bg-inherit">
+	<input {required} {name} {placeholder} {type} {value} on:input={handleInput} class="outline-none bg-inherit">
 	{#if error}
 		<p class="text-xs text-rose-500">{error}</p>
 	{/if}
