@@ -56,7 +56,7 @@ func sessionStoreInit() {
 	store.Options.SameSite = http.SameSiteLaxMode
 	store.Options.Path = "/"
 	store.Options.MaxAge = 0
-	store.Options.Secure = false
+	store.Options.Secure = true
 }
 
 func Init() http.Handler {
