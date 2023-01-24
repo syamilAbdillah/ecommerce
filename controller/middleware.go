@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -16,7 +17,7 @@ import (
 func cors() func(http.Handler) http.Handler {
 	return chiCors.Handler(chiCors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
-		AllowedOrigins: []string{"https://celadon-mochi-a0b1a6.netlify.app/", "http://*"},
+		AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Credentials"},
@@ -65,17 +66,22 @@ func getUserFromSession(
 
 			sess, err := getSess(r, SESSION_NAME)
 			if err != nil {
+				log.Printf("err: %v \n", err)
 				respondWithInternalErr(w, err)
 				return
 			}
 
+			log.Printf("sess: %v \n", sess)
+
 			if sess.IsNew {
+				log.Println("sess.IsNew: true")
 				ctx := context.WithValue(r.Context(), CURRENT_USER_CTX_KEY, g)
 				next.ServeHTTP(w, r.WithContext(ctx))
 				return
 			}
 
 			strid, ok := sess.Values[SESSION_ID_KEY].(string)
+			log.Printf("strid: %s \n", strid)
 			if !ok {
 				respondWithInternalErr(w, errors.New("INTERNAL_SERVER_ERROR"))
 				return
@@ -83,6 +89,7 @@ func getUserFromSession(
 
 			id, err := primitive.ObjectIDFromHex(strid)
 			if err != nil {
+				log.Printf("err casting ObjectIDFromHex: %v \n", err)
 				respondWithInternalErr(w, err)
 				return
 			}
