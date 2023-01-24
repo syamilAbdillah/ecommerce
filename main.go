@@ -18,9 +18,7 @@ func main() {
 }
 
 func run() error {
-	if err := godotenv.Load(); err != nil {
-		return err
-	}
+	godotenv.Load()
 
 	disconnect, err := db.Connect()
 	if err != nil {

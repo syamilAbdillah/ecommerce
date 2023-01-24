@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"log"
 	"os"
 	"sync"
 
@@ -27,7 +28,12 @@ func Connect() (Disconnect, error) {
 			options.Client().ApplyURI(os.Getenv("DATABASE_URI")),
 		)
 
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		db = conn.Database(os.Getenv("DATABASE_NAME"))
+
 	})
 
 	return func() error {
